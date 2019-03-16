@@ -12,7 +12,7 @@ And the libraries they suggested to use were not compatible with their `tokeniza
 So I modified text_encoder_build_subword.py of tensor2tensor library 
 that is one of the suggestions google mentioned to generate wordpiece vocabulary.
 
-### Modifications
+## Modifications
 - <strong>Original SubwordTextEncoder adds \"\_\" at the end of subwords appear 
 on the first position of words. 
 So I changed to add \"\_\" at the beginning of subwords that follow other subwords, 
@@ -30,12 +30,12 @@ commented unused functions some of which seem to exist for decoding,
 and removed mlperf_log module to make this project independent to tensor2tensor library.
 
 
-### Requirement
+## Requirement
 The environment I made this project in consists of :
 - python3.6
 - tensorflow 1.11 
 
-### Basic usage
+## Basic usage
 ```
 python subword_builder.py \
 --corpus_filepattern {corpus_for_vocab} \
