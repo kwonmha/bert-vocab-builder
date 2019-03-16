@@ -69,9 +69,6 @@ def main(unused_argv):
         'Must provide one of --corpus_filepattern or --vocab_filepattern')
 
   encoder = text_encoder.SubwordTextEncoder()
-  # print(token_counts)
-  # print(len(token_counts))
-  # exit()
   encoder.build_from_token_counts(token_counts, FLAGS.min_count,
                                   FLAGS.num_iterations)
   encoder.store_to_file(FLAGS.output_filename, add_single_quotes=False)

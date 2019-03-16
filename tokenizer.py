@@ -90,8 +90,6 @@ def encode(text):
       else:
         add_remaining = True
         token_start = pos
-      # if pos > 50:
-      #   exit()
   final_token = text[token_start:] if text[-1] in _ALPHANUMERIC_CHAR_SET else text[token_start:-1]
   if add_remaining: ret.append(final_token)
   # print(ret)

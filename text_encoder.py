@@ -614,9 +614,6 @@ class SubwordTextEncoder(TextEncoder):
           tf.logging.info(u"Processing token [{0}] took {1} seconds, consider "
                           "setting Text2TextProblem.max_subtoken_length to a "
                           "smaller value.".format(token, iter_time_secs))
-        # if temp == 3:
-        #   exit()
-        # temp += 1
 
       # Array of sets of candidate subtoken strings, by length.
       len_to_subtoken_strings = []
@@ -647,9 +644,6 @@ class SubwordTextEncoder(TextEncoder):
                                   for a in self._alphabet)
       new_subtoken_strings.sort(reverse=True)
 
-      # if i == (num_iterations - 1):
-      #   print(new_subtoken_strings[-100:])
-
       # Reinitialize to the candidate vocabulary.
       new_subtoken_strings = [subtoken for _, subtoken in new_subtoken_strings]
       if reserved_tokens:
@@ -664,7 +658,6 @@ class SubwordTextEncoder(TextEncoder):
       tf.logging.info("vocab_size = %d" % self.vocab_size)
       print(self.vocab_size)
 
-    # print(new_subtoken_strings[:30])
     oov_list = []
     for idx, subtoken in enumerate(new_subtoken_strings):
       if subtoken.startswith("_"):
@@ -676,9 +669,6 @@ class SubwordTextEncoder(TextEncoder):
     new_subtoken_strings.extend(char for char in self._alphabet
                                     if char not in new_subtoken_strings)
 
-    print(self.vocab_size)
-    print(oov_list)
-    # exit()
     self._init_subtokens_from_list(new_subtoken_strings)
     tf.logging.info("vocab_size = %d" % self.vocab_size)
 
