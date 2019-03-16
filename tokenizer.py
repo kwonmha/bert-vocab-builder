@@ -49,7 +49,7 @@ import sys
 import unicodedata
 import six
 from six.moves import range  # pylint: disable=redefined-builtin
-from tensor2tensor.utils import mlperf_log
+# from tensor2tensor.utils import mlperf_log
 import tensorflow as tf
 import time
 
@@ -180,8 +180,8 @@ def corpus_token_counts(
       split_on_newlines=split_on_newlines):
     counts.update(encode(_native_to_unicode(doc)))
   print("read all files")
-  mlperf_log.transformer_print(
-      key=mlperf_log.PREPROC_VOCAB_SIZE, value=len(counts))
+  # mlperf_log.transformer_print(
+  #     key=mlperf_log.PREPROC_VOCAB_SIZE, value=len(counts))
   return counts
 
 
