@@ -15,7 +15,7 @@ that is one of the suggestions google mentioned to generate wordpiece vocabulary
 ### Modifications
 - <strong>Original SubwordTextEncoder adds \"\_\" at the end of subwords appear 
 on the first position of words. 
-So I changed to add \"\_\" at the beginning of subwords follow other subwords, 
+So I changed to add \"\_\" at the beginning of subwords that follow other subwords, 
 using _my_escape_token() function,
 and later substitued \"\_\" with "##"</strong>
 
