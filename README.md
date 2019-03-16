@@ -7,7 +7,7 @@
 
 ***
 Although google opened pre-trained BERT and training scripts, 
-they didn't open source to generate wordpiece(subword) vocabulary matches to vocab.txt in opened model.<br>
+they didn't open source to generate wordpiece(subword) vocabulary matches to `vocab.txt` in opened model.<br>
 And the libraries they suggested to use were not compatible with their `tokenization.py` of BERT as they mentioned.<br>
 So I modified text_encoder_build_subword.py of tensor2tensor library 
 that is one of the suggestions google mentioned to generate wordpiece vocabulary.
