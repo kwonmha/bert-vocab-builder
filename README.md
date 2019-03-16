@@ -11,7 +11,7 @@ they didn't open source to generate wordpiece(subword) vocabulary matches to voc
 So I modified subword_builder.py of tensor2tensor library 
 which is one of suggestions google mentioned to generate wordpiece vocabulary.
 
-###Modifications
+### Modifications
 - <strong>Original SubwordTextEncoder adds \"\_\" at the end of subwords appear 
 on the first position of words. 
 So I changed to add \"\_\" at the beginning of subwords follow other subwords, 
@@ -29,5 +29,5 @@ commented unused functions some of which seem to exist for decoding,
 and removed mlperf_log module to make this project independent to tensor2tensor library.
 
 
-###Requirement
+### Requirement
 - tensorflow
