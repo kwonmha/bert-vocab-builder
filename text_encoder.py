@@ -28,7 +28,7 @@ import re
 import time
 import six
 from six.moves import range  # pylint: disable=redefined-builtin
-from tensor2tensor.data_generators import tokenizer
+# from tensor2tensor.data_generators import tokenizer
 
 import tensorflow as tf
 
