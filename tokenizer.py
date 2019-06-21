@@ -90,9 +90,16 @@ def encode(text):
       else:
         add_remaining = True
         token_start = pos
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+
+=======
+>>>>>>> master
+>>>>>>> Stashed changes
   final_token = text[token_start:] if text[-1] in _ALPHANUMERIC_CHAR_SET else text[token_start:-1]
-  if add_remaining: ret.append(final_token)
-  # print(ret)
+  if add_remaining:
+    ret.append(final_token)
   return ret
 
 
@@ -160,7 +167,7 @@ def _read_filepattern(filepattern, max_lines=None, split_on_newlines=True):
 
 
 def corpus_token_counts(
-    text_filepattern, corpus_max_lines, split_on_newlines=True):
+    text_filepattern, corpus_max_lines, split_on_newlines=True, use_zwj=False):
   """Read the corpus and compute a dictionary of token counts.
 
   Args:
@@ -173,6 +180,9 @@ def corpus_token_counts(
   Returns:
     a dictionary mapping token to count.
   """
+  if use_zwj:
+    _ALPHANUMERIC_CHAR_SET.add('~')
+
   counts = collections.Counter()
   for doc in _read_filepattern(
       text_filepattern,
@@ -180,8 +190,17 @@ def corpus_token_counts(
       split_on_newlines=split_on_newlines):
     counts.update(encode(_native_to_unicode(doc)))
   print("read all files")
+<<<<<<< Updated upstream
   # mlperf_log.transformer_print(
   #     key=mlperf_log.PREPROC_VOCAB_SIZE, value=len(counts))
+=======
+<<<<<<< HEAD
+
+=======
+  # mlperf_log.transformer_print(
+  #     key=mlperf_log.PREPROC_VOCAB_SIZE, value=len(counts))
+>>>>>>> master
+>>>>>>> Stashed changes
   return counts
 
 

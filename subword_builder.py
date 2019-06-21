@@ -44,8 +44,9 @@ tf.flags.DEFINE_string('vocab_filepattern', '', 'One or more vocabulary files '
 tf.flags.DEFINE_integer('min_count', 5, 'Minimum subtoken count in corpus')
 tf.flags.DEFINE_integer('corpus_max_lines', None,
                         'How many lines of corpus to read')
-tf.flags.DEFINE_integer('num_iterations', 4, 'Number of iterations')
+tf.flags.DEFINE_integer('num_iterations', 5, 'Number of iterations')
 tf.flags.DEFINE_bool('split_on_newlines', True, 'Break corpus into lines.')
+tf.flags.DEFINE_bool('use_zwj', True, 'Treat ~ as proper word.')
 FLAGS = tf.flags.FLAGS
 
 
@@ -58,7 +59,7 @@ def main(unused_argv):
     token_counts = tokenizer.corpus_token_counts(
         FLAGS.corpus_filepattern,
         FLAGS.corpus_max_lines,
-        split_on_newlines=FLAGS.split_on_newlines)
+        split_on_newlines=FLAGS.split_on_newlines, use_zwj=FLAGS.use_zwj)
 
   elif FLAGS.vocab_filepattern:
     token_counts = tokenizer.vocab_token_counts(FLAGS.vocab_filepattern,
@@ -72,6 +73,7 @@ def main(unused_argv):
   encoder.build_from_token_counts(token_counts, FLAGS.min_count,
                                   FLAGS.num_iterations)
   encoder.store_to_file(FLAGS.output_filename, add_single_quotes=False)
+  # encoder.store_to_file_with_counts(FLAGS.output_filename + "_counts")
 
 
 if __name__ == '__main__':

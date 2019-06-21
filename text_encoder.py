@@ -564,6 +564,8 @@ class SubwordTextEncoder(TextEncoder):
           raise ValueError("RESERVED_TOKENS must be a prefix of "
                            "reserved_tokens.")
 
+    start_time = time.time()
+
     # Initialize the alphabet. Note, this must include reserved tokens or it can
     # result in encoding failures.
     alphabet_tokens = chain(six.iterkeys(token_counts),
@@ -588,7 +590,6 @@ class SubwordTextEncoder(TextEncoder):
       # Collect all substrings of the encoded token that break along current
       # subtoken boundaries.
       subtoken_counts = collections.defaultdict(int)
-      temp=0
       for token, count in six.iteritems(token_counts):
         iter_start_time = time.time()
         # escaped_token = _escape_token(token, self._alphabet) # added "_" at the end
@@ -597,7 +598,8 @@ class SubwordTextEncoder(TextEncoder):
         # print(escaped_token)
         # print(subtokens)
 
-        # get all combinations
+        # excaped_token '_1234' -> subtoknes ['_12', '34'] (ex)
+        # '_1234':100 -> '_', '_1', '_12', '_123', '_1234','3', '34' :+= 100,
         start = 0
         for subtoken in subtokens:
           last_position = len(escaped_token) + 1
@@ -626,7 +628,7 @@ class SubwordTextEncoder(TextEncoder):
 
       # Consider the candidates longest to shortest, so that if we accept
       # a longer subtoken string, we can decrement the counts of its prefixes.
-      new_subtoken_strings = []
+      new_subtoken_strings_with_count = []
       for lsub in range(len(len_to_subtoken_strings) - 1, 0, -1):
         subtoken_strings = len_to_subtoken_strings[lsub]
         for subtoken_string in subtoken_strings:
@@ -635,17 +637,24 @@ class SubwordTextEncoder(TextEncoder):
             # Exclude alphabet tokens here, as they must be included later,
             # explicitly, regardless of count.
             if subtoken_string not in self._alphabet:
-              new_subtoken_strings.append((count, subtoken_string))
+              new_subtoken_strings_with_count.append((count, subtoken_string))
             for l in range(1, lsub):
               subtoken_counts[subtoken_string[:l]] -= count
 
       # Include the alphabet explicitly to guarantee all strings are encodable.
-      new_subtoken_strings.extend((subtoken_counts.get(a, 0), a)
+      new_subtoken_strings_with_count.extend((subtoken_counts.get(a, 0), a)
                                   for a in self._alphabet)
+<<<<<<< HEAD
+      new_subtoken_strings_with_count.sort(reverse=True)
+=======
       new_subtoken_strings.sort(reverse=True)
+<<<<<<< Updated upstream
+=======
+>>>>>>> master
+>>>>>>> Stashed changes
 
       # Reinitialize to the candidate vocabulary.
-      new_subtoken_strings = [subtoken for _, subtoken in new_subtoken_strings]
+      new_subtoken_strings = [subtoken for _, subtoken in new_subtoken_strings_with_count]
       if reserved_tokens:
         # escaped_reserved_tokens = [
         #     _escape_token(native_to_unicode(t), self._alphabet)
@@ -656,11 +665,18 @@ class SubwordTextEncoder(TextEncoder):
 
       self._init_subtokens_from_list(new_subtoken_strings)
       tf.logging.info("vocab_size = %d" % self.vocab_size)
-      print(self.vocab_size)
+      # print(self.vocab_size)
+
+    self.subtokens_with_counts = new_subtoken_strings_with_count
+
+    # Frequency of "_" is high.
+    # So remove from current position and add to the last.
+    new_subtoken_strings.remove("_")
+    new_subtoken_strings.insert(len(new_subtoken_strings), "_")
 
     oov_list = []
     for idx, subtoken in enumerate(new_subtoken_strings):
-      if subtoken.startswith("_"):
+      if subtoken.startswith("_") and subtoken != "_":
         new_subtoken_strings[idx] = subtoken[1:]
       elif subtoken[0] in self._alphabet and subtoken not in reserved_tokens:
         new_subtoken_strings[idx] = "##" + subtoken
@@ -669,6 +685,16 @@ class SubwordTextEncoder(TextEncoder):
     new_subtoken_strings.extend(char for char in self._alphabet
                                     if char not in new_subtoken_strings)
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+    # print(new_subtoken_strings)
+    print("total vocab size : {}, {} seconds elapsed ".format(self.vocab_size, time.time() - start_time))
+    # print(oov_list)
+
+=======
+>>>>>>> master
+>>>>>>> Stashed changes
     self._init_subtokens_from_list(new_subtoken_strings)
     tf.logging.info("vocab_size = %d" % self.vocab_size)
 
@@ -755,3 +781,8 @@ class SubwordTextEncoder(TextEncoder):
           f.write("'" + unicode_to_native(subtoken_string) + "'\n")
         else:
           f.write(unicode_to_native(subtoken_string) + "\n")
+
+  def store_to_file_with_counts(self, filename):
+    with tf.gfile.Open(filename, "w") as f:
+      for subtoken_string, count in self.subtokens_with_counts:
+        f.write(unicode_to_native(subtoken_string + "\t" + count) + "\n")
