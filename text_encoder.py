@@ -644,14 +644,7 @@ class SubwordTextEncoder(TextEncoder):
       # Include the alphabet explicitly to guarantee all strings are encodable.
       new_subtoken_strings_with_count.extend((subtoken_counts.get(a, 0), a)
                                   for a in self._alphabet)
-<<<<<<< HEAD
       new_subtoken_strings_with_count.sort(reverse=True)
-=======
-      new_subtoken_strings.sort(reverse=True)
-<<<<<<< Updated upstream
-=======
->>>>>>> master
->>>>>>> Stashed changes
 
       # Reinitialize to the candidate vocabulary.
       new_subtoken_strings = [subtoken for _, subtoken in new_subtoken_strings_with_count]
