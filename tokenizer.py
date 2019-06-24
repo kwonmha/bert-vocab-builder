@@ -90,13 +90,7 @@ def encode(text):
       else:
         add_remaining = True
         token_start = pos
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
 
-=======
->>>>>>> master
->>>>>>> Stashed changes
   final_token = text[token_start:] if text[-1] in _ALPHANUMERIC_CHAR_SET else text[token_start:-1]
   if add_remaining:
     ret.append(final_token)
@@ -190,17 +184,6 @@ def corpus_token_counts(
       split_on_newlines=split_on_newlines):
     counts.update(encode(_native_to_unicode(doc)))
   print("read all files")
-<<<<<<< Updated upstream
-  # mlperf_log.transformer_print(
-  #     key=mlperf_log.PREPROC_VOCAB_SIZE, value=len(counts))
-=======
-<<<<<<< HEAD
-
-=======
-  # mlperf_log.transformer_print(
-  #     key=mlperf_log.PREPROC_VOCAB_SIZE, value=len(counts))
->>>>>>> master
->>>>>>> Stashed changes
   return counts
 
 
