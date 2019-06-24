@@ -678,16 +678,10 @@ class SubwordTextEncoder(TextEncoder):
     new_subtoken_strings.extend(char for char in self._alphabet
                                     if char not in new_subtoken_strings)
 
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
     # print(new_subtoken_strings)
     print("total vocab size : {}, {} seconds elapsed ".format(self.vocab_size, time.time() - start_time))
     # print(oov_list)
 
-=======
->>>>>>> master
->>>>>>> Stashed changes
     self._init_subtokens_from_list(new_subtoken_strings)
     tf.logging.info("vocab_size = %d" % self.vocab_size)
 
