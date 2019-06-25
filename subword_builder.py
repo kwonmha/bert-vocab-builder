@@ -51,7 +51,6 @@ FLAGS = tf.flags.FLAGS
 
 
 def main(unused_argv):
-  print(FLAGS.corpus_filepattern)
   if FLAGS.corpus_filepattern and FLAGS.vocab_filepattern:
     raise ValueError(
         'Must only provide one of --corpus_filepattern or --vocab_filepattern')
