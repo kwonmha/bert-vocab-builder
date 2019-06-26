@@ -644,14 +644,7 @@ class SubwordTextEncoder(TextEncoder):
       # Include the alphabet explicitly to guarantee all strings are encodable.
       new_subtoken_strings_with_count.extend((subtoken_counts.get(a, 0), a)
                                   for a in self._alphabet)
-<<<<<<< HEAD
       new_subtoken_strings_with_count.sort(reverse=True)
-=======
-      new_subtoken_strings.sort(reverse=True)
-<<<<<<< Updated upstream
-=======
->>>>>>> master
->>>>>>> Stashed changes
 
       # Reinitialize to the candidate vocabulary.
       new_subtoken_strings = [subtoken for _, subtoken in new_subtoken_strings_with_count]
@@ -685,16 +678,10 @@ class SubwordTextEncoder(TextEncoder):
     new_subtoken_strings.extend(char for char in self._alphabet
                                     if char not in new_subtoken_strings)
 
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
     # print(new_subtoken_strings)
     print("total vocab size : {}, {} seconds elapsed ".format(self.vocab_size, time.time() - start_time))
     # print(oov_list)
 
-=======
->>>>>>> master
->>>>>>> Stashed changes
     self._init_subtokens_from_list(new_subtoken_strings)
     tf.logging.info("vocab_size = %d" % self.vocab_size)
 
