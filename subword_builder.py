@@ -47,6 +47,7 @@ tf.flags.DEFINE_integer('corpus_max_lines', None,
 tf.flags.DEFINE_integer('num_iterations', 5, 'Number of iterations')
 tf.flags.DEFINE_bool('split_on_newlines', True, 'Break corpus into lines.')
 tf.flags.DEFINE_bool('use_zwj', True, 'Treat ~ as proper word.')
+tf.flags.DEFINE_integer('max_subtoken_length', None, 'Max subtoken length')
 FLAGS = tf.flags.FLAGS
 
 
@@ -71,7 +72,7 @@ def main(unused_argv):
 
   encoder = text_encoder.SubwordTextEncoder()
   encoder.build_from_token_counts(token_counts, FLAGS.min_count,
-                                  FLAGS.num_iterations)
+                                  FLAGS.num_iterations, max_subtoken_length=FLAGS.max_subtoken_length)
   encoder.store_to_file(FLAGS.output_filename, add_single_quotes=False)
   # encoder.store_to_file_with_counts(FLAGS.output_filename + "_counts")
 

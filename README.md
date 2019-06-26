@@ -38,7 +38,7 @@ The environment I made this project in consists of :
 ## Basic usage
 ```
 python subword_builder.py \
---corpus_filepattern {corpus_for_vocab} \
+--corpus_filepattern "{corpus_for_vocab}" \
 --output_filename {name_of_vocab}
 --min_count {minimum_subtoken_counts}
 ```
