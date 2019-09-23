@@ -170,6 +170,8 @@ def corpus_token_counts(
     split_on_newlines: A boolean. If true, then split files by lines and strip
         leading and trailing whitespace from each line. Otherwise, treat each
         file as a single string.
+    additional_chars: A String. Each consisting characters will be treat as normal
+        alphabets so that they will be included in each vocab.
 
   Returns:
     a dictionary mapping token to count.
