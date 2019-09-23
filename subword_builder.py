@@ -46,7 +46,7 @@ tf.flags.DEFINE_integer('corpus_max_lines', None,
                         'How many lines of corpus to read')
 tf.flags.DEFINE_integer('num_iterations', 5, 'Number of iterations')
 tf.flags.DEFINE_bool('split_on_newlines', True, 'Break corpus into lines.')
-tf.flags.DEFINE_bool('additional_chars', "", 'Set special characters to be included in vocab. ex : "~", "/".')
+tf.flags.DEFINE_string('additional_chars', "", 'Set special characters to be included in vocab. ex : "~", "/".')
 tf.flags.DEFINE_integer('max_subtoken_length', None, 'Max subtoken length')
 FLAGS = tf.flags.FLAGS
 
