@@ -61,7 +61,9 @@ _native_to_unicode = (lambda s: s.decode("utf-8")) if six.PY2 else (lambda s: s)
 _ALPHANUMERIC_CHAR_SET = set(
     six.unichr(i) for i in range(sys.maxunicode)
     if (unicodedata.category(six.unichr(i)).startswith("L") or
-        unicodedata.category(six.unichr(i)).startswith("N")))
+        unicodedata.category(six.unichr(i)).startswith("N") or
+        unicodedata.category(six.unichr(i)).startswith("P")))
+        # unicodedata.category(six.unichr(i)).startswith("S")
 
 
 def encode(text):
