@@ -46,7 +46,7 @@ tf.flags.DEFINE_integer('corpus_max_lines', None,
                         'How many lines of corpus to read')
 tf.flags.DEFINE_integer('num_iterations', 5, 'Number of iterations')
 tf.flags.DEFINE_bool('split_on_newlines', True, 'Break corpus into lines.')
-tf.flags.DEFINE_bool('use_zwj', False, 'Treat ~ as proper word.')
+tf.flags.DEFINE_bool('additional_chars', "", 'Set special characters to be included in vocab. ex : "~", "/".')
 tf.flags.DEFINE_integer('max_subtoken_length', None, 'Max subtoken length')
 FLAGS = tf.flags.FLAGS
 
@@ -60,7 +60,7 @@ def main(unused_argv):
     token_counts = tokenizer.corpus_token_counts(
         FLAGS.corpus_filepattern,
         FLAGS.corpus_max_lines,
-        split_on_newlines=FLAGS.split_on_newlines, use_zwj=FLAGS.use_zwj)
+        split_on_newlines=FLAGS.split_on_newlines, additional_chars=FLAGS.additional_chars)
 
   elif FLAGS.vocab_filepattern:
     token_counts = tokenizer.vocab_token_counts(FLAGS.vocab_filepattern,

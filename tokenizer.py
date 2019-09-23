@@ -161,7 +161,7 @@ def _read_filepattern(filepattern, max_lines=None, split_on_newlines=True):
 
 
 def corpus_token_counts(
-    text_filepattern, corpus_max_lines, split_on_newlines=True, use_zwj=False):
+    text_filepattern, corpus_max_lines, split_on_newlines=True, additional_chars=""):
   """Read the corpus and compute a dictionary of token counts.
 
   Args:
@@ -174,8 +174,8 @@ def corpus_token_counts(
   Returns:
     a dictionary mapping token to count.
   """
-  if use_zwj:
-    _ALPHANUMERIC_CHAR_SET.add('~')
+  if additional_chars:
+    _ALPHANUMERIC_CHAR_SET.add(additional_chars)
 
   counts = collections.Counter()
   for doc in _read_filepattern(
