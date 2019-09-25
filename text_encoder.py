@@ -772,4 +772,4 @@ class SubwordTextEncoder(TextEncoder):
   def store_to_file_with_counts(self, filename):
     with tf.gfile.Open(filename, "w") as f:
       for subtoken_string, count in self.subtokens_with_counts:
-        f.write(unicode_to_native(subtoken_string + "\t" + count) + "\n")
+        f.write(unicode_to_native(subtoken_string + "\t" + str(count)) + "\n")
