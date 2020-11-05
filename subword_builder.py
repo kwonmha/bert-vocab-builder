@@ -25,7 +25,6 @@ python data_generators/text_encoder_build_subword.py \
     --corpus_filepattern=$DATA_DIR/my_problem-train-* \
     --corpus_max_lines=12345 \
     --output_filename=$DATA_DIR/my_problem.subword_text_encoder \
-    --logtostderr
 
 """
 from __future__ import absolute_import
@@ -48,10 +47,15 @@ tf.flags.DEFINE_integer('num_iterations', 5, 'Number of iterations')
 tf.flags.DEFINE_bool('split_on_newlines', True, 'Break corpus into lines.')
 tf.flags.DEFINE_string('additional_chars', "", 'Set special characters to be included in vocab. ex : "~", "/".')
 tf.flags.DEFINE_integer('max_subtoken_length', None, 'Max subtoken length')
+tf.flags.DEFINE_bool('backward', False, 'Builds subwords from backward.')
+tf.flags.DEFINE_string('log_level', 'INFO', 'Set verbosity of logger')
 FLAGS = tf.flags.FLAGS
 
 
 def main(unused_argv):
+  if FLAGS.log_level not in ['DEBUG', 'INFO', 'ERROR']:
+    raise ValueError('Set verbosity among "DEBUG", "INFO", "ERROR"')
+  tf.logging.set_verbosity(FLAGS.log_level)
   if FLAGS.corpus_filepattern and FLAGS.vocab_filepattern:
     raise ValueError(
         'Must only provide one of --corpus_filepattern or --vocab_filepattern')
@@ -72,9 +76,10 @@ def main(unused_argv):
 
   encoder = text_encoder.SubwordTextEncoder()
   encoder.build_from_token_counts(token_counts, FLAGS.min_count,
-                                  FLAGS.num_iterations, max_subtoken_length=FLAGS.max_subtoken_length)
+                                  FLAGS.num_iterations, max_subtoken_length=FLAGS.max_subtoken_length,
+                                  backward=FLAGS.backward)
   encoder.store_to_file(FLAGS.output_filename, add_single_quotes=False)
-  # encoder.store_to_file_with_counts(FLAGS.output_filename + "_counts")
+  #encoder.store_to_file_with_counts(FLAGS.output_filename + "_counts")
 
 
 if __name__ == '__main__':

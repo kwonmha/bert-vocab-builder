@@ -535,7 +535,8 @@ class SubwordTextEncoder(TextEncoder):
                               min_count,
                               num_iterations=4,
                               reserved_tokens=None,
-                              max_subtoken_length=None):
+                              max_subtoken_length=None,
+                              backward=False):
     """Train a SubwordTextEncoder based on a dictionary of word counts.
 
     Args:
@@ -549,6 +550,7 @@ class SubwordTextEncoder(TextEncoder):
         then the runtime and memory use of creating the vocab is quadratic in
         the length of the longest token. If this is set, then it is instead
         O(max_subtoken_length * length of longest token).
+      backward: bool. Build subwords backward if True.
 
     Raises:
       ValueError: if reserved is not 0 or len(RESERVED_TOKENS). In this case, it
@@ -595,27 +597,37 @@ class SubwordTextEncoder(TextEncoder):
         # escaped_token = _escape_token(token, self._alphabet) # added "_" at the end
         escaped_token = _my_escape_token(token, self._alphabet)
         subtokens = self._escaped_token_to_subtoken_strings(escaped_token)
-        # print(escaped_token)
-        # print(subtokens)
 
         # excaped_token '_1234' -> subtoknes ['_12', '34'] (ex)
         # '_1234':100 -> '_', '_1', '_12', '_123', '_1234','3', '34' :+= 100,
         start = 0
+        end = len(escaped_token) + 1
         for subtoken in subtokens:
-          last_position = len(escaped_token) + 1
-          if max_subtoken_length is not None:
-            last_position = min(last_position, start + max_subtoken_length)
+          if backward:
+            start_position = 0
+            if max_subtoken_length is not None:
+              start_position = max(start_position, end - max_subtoken_length)
 
-          for end in range(start + 1, last_position):
-            new_subtoken = escaped_token[start:end]
-            subtoken_counts[new_subtoken] += count
-          start += len(subtoken)
+            for start in range(end, start_position, -1):
+              new_subtoken = escaped_token[start:end]
+              subtoken_counts[new_subtoken] += count
+            end -= len(subtoken)
+
+          else:
+            last_position = len(escaped_token) + 1
+            if max_subtoken_length is not None:
+              last_position = min(last_position, start + max_subtoken_length)
+
+            for end in range(start + 1, last_position):
+              new_subtoken = escaped_token[start:end]
+              subtoken_counts[new_subtoken] += count
+            start += len(subtoken)
 
         iter_time_secs = time.time() - iter_start_time
         if iter_time_secs > 0.1:
           tf.logging.info(u"Processing token [{0}] took {1} seconds, consider "
-                          "setting Text2TextProblem.max_subtoken_length to a "
-                          "smaller value.".format(token, iter_time_secs))
+                          "setting max_subtoken_length to a smaller value.".format(
+                          token, iter_time_secs))
 
       # Array of sets of candidate subtoken strings, by length.
       len_to_subtoken_strings = []
@@ -654,11 +666,12 @@ class SubwordTextEncoder(TextEncoder):
         #     for t in reserved_tokens
         # ]
         # new_subtoken_strings = escaped_reserved_tokens + new_subtoken_strings
+
+        # Does not need to escape reserved_tokens.
         new_subtoken_strings = reserved_tokens + new_subtoken_strings
 
       self._init_subtokens_from_list(new_subtoken_strings)
       tf.logging.info("vocab_size = %d" % self.vocab_size)
-      # print(self.vocab_size)
 
     self.subtokens_with_counts = new_subtoken_strings_with_count
 
@@ -678,12 +691,9 @@ class SubwordTextEncoder(TextEncoder):
     new_subtoken_strings.extend(char for char in self._alphabet
                                     if char not in new_subtoken_strings)
 
-    # print(new_subtoken_strings)
-    print("total vocab size : {}, {} seconds elapsed ".format(self.vocab_size, time.time() - start_time))
-    # print(oov_list)
-
     self._init_subtokens_from_list(new_subtoken_strings)
-    tf.logging.info("vocab_size = %d" % self.vocab_size)
+    tf.logging.info("total vocab size : {}, {} seconds elapsed ".format(
+      self.vocab_size, time.time() - start_time))
 
   # @property
   # def all_subtoken_strings(self):
@@ -726,8 +736,8 @@ class SubwordTextEncoder(TextEncoder):
         for i, s in enumerate(subtoken_strings) if s
     }
     # Initialize the cache to empty.
-    self._cache_size = 2 ** 20
-    self._cache = [(None, None)] * self._cache_size
+    # self._cache_size = 2 ** 20
+    # self._cache = [(None, None)] * self._cache_size
 
   def _init_alphabet_from_tokens(self, tokens):
     """Initialize alphabet from an iterable of token or subtoken strings."""
@@ -771,5 +781,5 @@ class SubwordTextEncoder(TextEncoder):
 
   def store_to_file_with_counts(self, filename):
     with tf.gfile.Open(filename, "w") as f:
-      for subtoken_string, count in self.subtokens_with_counts:
-        f.write(unicode_to_native(subtoken_string + "\t" + str(count)) + "\n")
+      for count, subtoken_string in self.subtokens_with_counts:
+        f.write(unicode_to_native(subtoken_string) + "\t" + str(count) + "\n")

@@ -49,7 +49,6 @@ import sys
 import unicodedata
 import six
 from six.moves import range  # pylint: disable=redefined-builtin
-# from tensor2tensor.utils import mlperf_log
 import tensorflow as tf
 import time
 
@@ -61,14 +60,11 @@ _native_to_unicode = (lambda s: s.decode("utf-8")) if six.PY2 else (lambda s: s)
 _ALPHANUMERIC_CHAR_SET = set(
     six.unichr(i) for i in range(sys.maxunicode)
     if (unicodedata.category(six.unichr(i)).startswith("L") or
-        unicodedata.category(six.unichr(i)).startswith("N") or
-        unicodedata.category(six.unichr(i)).startswith("P")))
-        # unicodedata.category(six.unichr(i)).startswith("S")
+        unicodedata.category(six.unichr(i)).startswith("N")))
 
 
 def encode(text):
   """Encode a unicode string as a list of tokens.
-
   Args:
     text: a unicode string
   Returns:
@@ -78,23 +74,29 @@ def encode(text):
     return []
   ret = []
   token_start = 0
-  # Classify each character in the input string
+  # Classify each character in the input string.
   is_alnum = [c in _ALPHANUMERIC_CHAR_SET for c in text]
-  add_remaining = False
   for pos in range(1, len(text)):
-    add_remaining = False
     if is_alnum[pos] != is_alnum[pos - 1]:
-      if not is_alnum[pos]:
-        token = text[token_start:pos]
-        if token != u" " or token_start == 0:
-          add_remaining = False
+      token = text[token_start:pos]
+      # Remove new-line, tab characters.
+      if text[pos-1] in ["\n", "\t"]:
+        token = text[token_start:pos-1]
+      if token != u" " or token_start == 0:
+        # Remove spaces surrounding non-alphanumeric characters,
+        # e.g. "  <>   ".
+        token = token.strip()
+        # In case token is a sequence of spaces.
+        if len(token) > 0:
           ret.append(token)
-      else:
-        add_remaining = True
-        token_start = pos
+      token_start = pos
 
-  final_token = text[token_start:] if text[-1] in _ALPHANUMERIC_CHAR_SET else text[token_start:-1]
-  if add_remaining:
+    # In case non-alphanumeric characters follow
+    elif not is_alnum[pos] and text[pos] == " ":
+      token = text[token_start:pos]
+
+  final_token = text[token_start:].strip()
+  if len(final_token) > 0:
     ret.append(final_token)
   return ret
 
@@ -131,9 +133,10 @@ def _read_filepattern(filepattern, max_lines=None, split_on_newlines=True):
     the entire contents of each file if False.
   """
   filenames = sorted(tf.gfile.Glob(filepattern))
-  print(filenames)
+  print("The number of files to read : ", len(filenames))
   lines_read = 0
   for filename in filenames:
+    tf.logging.INFO("Start reading ", filename)
     start = time.time()
     with tf.gfile.Open(filename) as f:
       if split_on_newlines:
@@ -159,7 +162,7 @@ def _read_filepattern(filepattern, max_lines=None, split_on_newlines=True):
         else:
           yield f.read()
 
-    print(time.time() - start, "for reading read file :", filename)
+    tf.logging.INFO(time.time() - start, " secs for reading read file :", filename)
 
 
 def corpus_token_counts(
