@@ -136,7 +136,7 @@ def _read_filepattern(filepattern, max_lines=None, split_on_newlines=True):
   print("The number of files to read : ", len(filenames))
   lines_read = 0
   for filename in filenames:
-    tf.logging.INFO("Start reading ", filename)
+    tf.logging.info("Start reading ", filename)
     start = time.time()
     with tf.gfile.Open(filename) as f:
       if split_on_newlines:
@@ -162,7 +162,7 @@ def _read_filepattern(filepattern, max_lines=None, split_on_newlines=True):
         else:
           yield f.read()
 
-    tf.logging.INFO(time.time() - start, " secs for reading read file :", filename)
+    tf.logging.info(time.time() - start, " secs for reading read file :", filename)
 
 
 def corpus_token_counts(
